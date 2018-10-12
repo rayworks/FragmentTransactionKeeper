@@ -17,7 +17,7 @@ Also check : [Fragment Transactions & Activity State Loss](https://www.androidde
 
 ## Usage:
 
-* Setup the [custom PlaceHolderFragment](./transactionkeeper/src/main/java/com/rayworks/transactionkeeper/PlaceHolderFragment) in your main UI (Activity / Fragment)
+* Setup the [custom PlaceHolderFragment](./transactionkeeper/src/main/java/com/rayworks/transactionkeeper/PlaceHolderFragment.kt) in your main UI (Activity / Fragment)
 
 * Wrap your asynchronous Fragment transaction logic as below :
 ```
