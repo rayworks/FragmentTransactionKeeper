@@ -1,7 +1,9 @@
 package com.rayworks.fragmenttransactionkeeper
 
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.Snackbar
+import android.support.v4.app.FragmentActivity
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
@@ -10,12 +12,16 @@ import android.widget.Toast
 import com.rayworks.transactionkeeper.PlaceHolderFragment
 import kotlinx.android.synthetic.main.activity_main.fab
 import kotlinx.android.synthetic.main.activity_main.toolbar
-import kotlinx.android.synthetic.main.content_main.content_parent
 import kotlinx.android.synthetic.main.content_main.text_default
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var placeHolderFragment: PlaceHolderFragment
+    private val handler = Handler()
+
+    private val callback = Runnable {
+        showNewFragment(TextFragment())
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,15 +39,15 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this@MainActivity, "Running ", Toast.LENGTH_SHORT).show()
 
                     // mock the async operation
-                    content_parent.postDelayed({
-                        showNewFragment(TextFragment())
-                    }, 5000)
+                    handler.postDelayed(callback, 5000)
                 }.show()
         }
 
         var fragment = supportFragmentManager.findFragmentByTag(PlaceHolderFragment.sTAG)
         if (fragment == null) {
             placeHolderFragment = PlaceHolderFragment()
+            placeHolderFragment.retainedEnabled = true
+
             supportFragmentManager.beginTransaction()
                 .add(placeHolderFragment, PlaceHolderFragment.sTAG)
                 .commit()
@@ -51,10 +57,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showNewFragment(textFragment: TextFragment) {
-        text_default.visibility = View.GONE
-
-        placeHolderFragment.tryWithAction { activity ->
+        placeHolderFragment.tryWithAction { activity: FragmentActivity ->
             kotlin.run {
+                text_default.visibility = View.GONE
+
                 activity.supportFragmentManager.beginTransaction().add(
                     R.id.content_parent, textFragment
                 ).commit()
@@ -69,6 +75,12 @@ class MainActivity : AppCompatActivity() {
         /*supportFragmentManager.beginTransaction().add(
             R.id.content_parent, textFragment
         ).commit()*/
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        handler.removeCallbacks(callback)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
