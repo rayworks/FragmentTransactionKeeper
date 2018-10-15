@@ -9,15 +9,14 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import com.rayworks.transactionkeeper.PlaceHolderFragment
+import com.rayworks.transactionkeeper.TransactionKeeper
 import kotlinx.android.synthetic.main.activity_main.fab
 import kotlinx.android.synthetic.main.activity_main.toolbar
 import kotlinx.android.synthetic.main.content_main.text_default
 
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var placeHolderFragment: PlaceHolderFragment
     private val handler = Handler()
+    private lateinit var keeper: TransactionKeeper
 
     private val callback = Runnable {
         showNewFragment(TextFragment())
@@ -43,21 +42,15 @@ class MainActivity : AppCompatActivity() {
                 }.show()
         }
 
-        var fragment = supportFragmentManager.findFragmentByTag(PlaceHolderFragment.sTAG)
-        if (fragment == null) {
-            placeHolderFragment = PlaceHolderFragment()
-            placeHolderFragment.retainedEnabled = true
+        bindKeeper()
+    }
 
-            supportFragmentManager.beginTransaction()
-                .add(placeHolderFragment, PlaceHolderFragment.sTAG)
-                .commit()
-        } else {
-            placeHolderFragment = fragment as PlaceHolderFragment
-        }
+    private fun bindKeeper() {
+        keeper = TransactionKeeper(this)
     }
 
     private fun showNewFragment(textFragment: TextFragment) {
-        placeHolderFragment.tryWithAction { activity: FragmentActivity ->
+        keeper.execute { activity: FragmentActivity ->
             kotlin.run {
                 text_default.visibility = View.GONE
 
