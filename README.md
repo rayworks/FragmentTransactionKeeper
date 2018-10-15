@@ -17,18 +17,20 @@ Also check : [Fragment Transactions & Activity State Loss](https://www.androidde
 
 ## Usage:
 
-* Setup the [custom PlaceHolderFragment](./transactionkeeper/src/main/java/com/rayworks/transactionkeeper/PlaceHolderFragment.kt) in your main UI (Activity / Fragment)
+* Bind the [TransactionKeeper](./transactionkeeper/src/main/java/com/rayworks/transactionkeeper/TransactionKeeper.kt) in your main UI (Activity / Fragment)
+```
+    transactionKeeper = TransactionKeeper(this)
+```
 
 * Wrap your asynchronous Fragment transaction logic as below :
 ```
-        placeHolderFragment.tryWithAction { activity ->
-               kotlin.run {
-                     // commit your own Framgment transaction here
-               }
-        }
+    transactionKeeper.execute { activity ->
+           kotlin.run {
+                 // commit your own Framgment transaction here
+           }
+    }
 ```
 
-* Done!
 
 For detail info, please check the `MainActivity` in the `app` module.
 
@@ -38,4 +40,4 @@ provides an example of avoiding the IllegalStateException during the fragment tr
 
 
 ## Todo list:
-- [ ] Refactor the library code to provide more convenient APIs
+- [x] Refactor the library code to provide more convenient APIs
